@@ -1,8 +1,9 @@
 pragma solidity ^0.5.16;
 
 import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
+import "./interfaces/IFlightSuretyData.sol";
 
-contract FlightSuretyData {
+contract FlightSuretyData is IFlightSuretyData {
     using SafeMath for uint256;
 
     /********************************************************************************************/
@@ -22,8 +23,8 @@ contract FlightSuretyData {
         address airline;
         string code;
         uint price;
-        string from;
-        string to;
+        string departure;
+        string destination;
         mapping(address => uint) insurances;
     }
 
@@ -40,7 +41,7 @@ contract FlightSuretyData {
     // lists
     address[] internal passengers;
     bytes32[] public flightKeys;
-    mapping(address => uint256) private authorizedCallers;
+    mapping(address => bool) public authorizedCallers;
     mapping(address => Airline) public registeredAirlines;
     mapping(bytes32 => Flight) public flights;
     mapping(address => uint) public withdrawals;
@@ -148,7 +149,7 @@ contract FlightSuretyData {
     *
     * @return A bool that is the current operating status
     */
-    function isOperational() public view returns(bool)
+    function isOperational() external view returns(bool)
     {
         return operational;
     }
@@ -164,25 +165,11 @@ contract FlightSuretyData {
     }
 
     /**
-    * @dev Function to authorize addresses to call functions from Fligh Surety Data contract
-    */
-    function authorizeCaller(address _contractAddress) external requireContractOwner{
-        authorizedCallers[_contractAddress] = true;
-    }
-
-    /**
-    * @dev Function to remove authorization addresses to call functions from Fligh Surety Data contract
-    */
-    function deauthorizeCaller(address _contractAddress) external requireContractOwner{
-        delete authorizedContracts[_contractAddress];
-    }
-
-    /**
     * @dev Function to return fund of one airline
     */
     function isAirlineFunded(address _airlineAddress) external view returns (bool _hasFunded)
     {
-        _hasFunded = registeredAirlines[_airlineAddress].funded;
+        _hasFunded = registeredAirlines[_airlineAddress].isFunded;
     }
 
     /**
@@ -193,17 +180,17 @@ contract FlightSuretyData {
     }
 
     /**
-    * @dev Function flight key from code and destination
-    */
-    function getFlightKey(string _flightCode, string _destination, uint _timestamp) public pure returns(bytes32) {
-        return keccak256(abi.encodePacked(_flightCode, _destination, _timestamp));
-    }
-
-    /**
     * @dev Function to return a price of one flight
     */
     function getFlightPrice(bytes32 _flightKey) external view returns(uint) {
         return flights[_flightKey].price;
+    }
+
+    /**
+    * @dev Function to return airlines quantity registered
+    */
+    function getRegisteredAirlinesCount() external view returns(uint) {
+        return registeredAirlinesCount;
     }
 
     /********************************************************************************************/
@@ -313,7 +300,7 @@ contract FlightSuretyData {
     *      resulting in insurance payouts, the contract should be self-sustaining
     *
     */
-    function fund(address _airline) external payable
+    function fund(address _airline) public payable
     requireIsOperational
     requireIsCallerAuthorized
     {
@@ -329,7 +316,7 @@ contract FlightSuretyData {
         flights[_flightKey].status = _status;
 
         if (_status == 20) {
-        creditInsurees(_flightKey);
+            creditInsurees(_flightKey);
         }
 
         emit FlightStatusUpdated(_flightKey, _status);
