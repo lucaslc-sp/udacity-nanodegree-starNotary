@@ -41,7 +41,8 @@ contract FlightSuretyApp {
     IFlightSuretyData public flightSuretyData;
 
     // :: Events for Smart Contracts functions
-     event FlightRegistered(bytes32 flightKey);
+    event FlightRegistered(bytes32 flightKey);
+    event WithdrawRequest(address recipient);
 
     /********************************************************************************************/
     /*                                       CONSTRUCTOR                                        */
@@ -226,7 +227,8 @@ contract FlightSuretyApp {
     * @dev Method for passanger withdraw and pay
     */
     function withdraw() external requireIsOperational {
-    flightSuretyData.pay(msg.sender);
+        flightSuretyData.pay(msg.sender);
+        emit WithdrawRequest(msg.sender);
     }
 
     /**

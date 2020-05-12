@@ -158,7 +158,7 @@ contract('Flight Surety Tests', async (accounts) => {
     );
 
     assert.equal(isFlightRegistered, true, "Flight not registered");
-    assert.equal(eventEmitted, true, 'Invalid event emitted')   
+    assert.equal(eventEmitted, true, 'Invalid event emitted');
   });
 
   it('(Passenger) Can book a flight', async () => {
@@ -188,5 +188,23 @@ contract('Flight Surety Tests', async (accounts) => {
       "Passenger should be able to buy insurance correctly"
     );
   });
+
+  it('(Passenger) Withdraw their credited amount', async () => {
+    const balanceBefore = await web3.eth.getBalance(config.firstAirline);
+    let eventEmitted = false
+      
+    try {
+      await config.flightSuretyApp.withdraw({ from: config.firstAirline });
+    } catch (error) {}
+
+    const balanceAfter = await web3.eth.getBalance(config.firstAirline);
+
+    await config.flightSuretyApp.WithdrawRequest(function(error, event){
+      eventEmitted = true 
+    });
+
+    assert(+balanceBefore < +balanceAfter, "Airline withdrawal failed");
+    assert.equal(eventEmitted, true, 'Invalid event emitted');
+  })
 
 });
