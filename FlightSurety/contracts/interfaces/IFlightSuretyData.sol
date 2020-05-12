@@ -1,4 +1,4 @@
-pragma solidity ^0.5.16;
+pragma solidity ^0.4.25;
 
 interface IFlightSuretyData {
 
@@ -8,13 +8,14 @@ interface IFlightSuretyData {
 
     // :: PUBLIC UTILITY FUNCTIONS
     function isOperational() external view returns(bool);
-    function isAirlineFunded(address airline) external view returns (bool);
-    function isAirlineRegistered(address airline) external view returns (bool);
-    function setOperatingStatus (bool mode) external;
-    function authorizeCaller(address _contractAddress) external;
-    function deauthorizeCaller(address _contractAddress) external;
+    function isAirlineFunded(address _airline) external view returns (bool);
+    function isAirlineRegistered(address _airline) external view returns (bool);
+    function setOperatingStatus (bool _mode) external;
+    function authorizeCaller(address callerAddress) external;
     function getFlightPrice(bytes32 _flightKey) external view returns(uint);
     function getRegisteredAirlinesCount() external view returns(uint);
+    function isFlightRegistered(bytes32 _flightKey) external view returns(bool);
+    function getPassengerPaidAmount(bytes32 _flightKey, address _passenger) external view returns(uint);
 
     // :: SMART CONTRACT FUNCTIONS
     function registerAirline (address _airline, address _sender) external;

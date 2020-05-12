@@ -1,4 +1,4 @@
-pragma solidity ^0.5.16;
+pragma solidity ^0.4.25;
 
 import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "./interfaces/IFlightSuretyData.sol";
@@ -165,6 +165,16 @@ contract FlightSuretyData is IFlightSuretyData {
     }
 
     /**
+    * @dev Function to authorize addresses to call functions from flighSuretyData contract
+    */
+    function authorizeCaller(address callerAddress) external
+    requireContractOwner
+    requireIsOperational
+    {
+        authorizedCallers[callerAddress] = true;
+    }
+
+    /**
     * @dev Function to return fund of one airline
     */
     function isAirlineFunded(address _airlineAddress) external view returns (bool _hasFunded)
@@ -191,6 +201,20 @@ contract FlightSuretyData is IFlightSuretyData {
     */
     function getRegisteredAirlinesCount() external view returns(uint) {
         return registeredAirlinesCount;
+    }
+
+    /**
+    * @dev Function for check if flight is registered
+    */
+    function isFlightRegistered(bytes32 _flightKey) external view returns(bool) {
+        return flights[_flightKey].isRegistered;
+    }
+
+    /**
+    * @dev Function for how much passenger paid
+    */
+    function getPassengerPaidAmount(bytes32 _flightKey, address _passenger) external view returns(uint) {
+        return flights[_flightKey].insurances[_passenger];
     }
 
     /********************************************************************************************/
@@ -324,7 +348,7 @@ contract FlightSuretyData is IFlightSuretyData {
 
 
     function() external payable requireIsCallerAuthorized {
-        require(msg.data.length == 0, "");
+        require(msg.data.length == 0, "Msg is empty");
         fund(msg.sender);
     }
 }

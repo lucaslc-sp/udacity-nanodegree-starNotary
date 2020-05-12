@@ -1,4 +1,4 @@
-pragma solidity ^0.5.16;
+pragma solidity ^0.4.25;
 
 // It's important to avoid vulnerabilities due to numeric overflow bugs
 // OpenZeppelin's SafeMath library, when used correctly, protects agains such bugs
@@ -38,7 +38,7 @@ contract FlightSuretyApp {
     mapping(address => address[]) public airlineVotes;
 
     // :: Interface for data contract
-    IFlightSuretyData flightSuretyData;
+    IFlightSuretyData public flightSuretyData;
 
     // :: Events for Smart Contracts functions
      event FlightRegistered(bytes32 flightKey);
@@ -306,10 +306,10 @@ contract FlightSuretyApp {
                                         indexes: indexes
                                     });
                                     
-        emit OracleRegistered(indexes);                            
+        emit OracleRegistered(indexes);
     }
 
-    function getMyIndexes() view external returns(uint8[3])
+    function getMyIndexes() external view returns(uint8[3])
     {
         require(oracles[msg.sender].isRegistered, "Not registered as an oracle");
 
