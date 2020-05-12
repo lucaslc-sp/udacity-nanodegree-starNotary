@@ -204,6 +204,13 @@ contract FlightSuretyData is IFlightSuretyData {
     }
 
     /**
+    * @dev Function to return flights count
+    */
+    function getRegisteredFlightsCount() external view returns(uint) {
+        return flightKeys.length;
+    }
+
+    /**
     * @dev Function for check if flight is registered
     */
     function isFlightRegistered(bytes32 _flightKey) external view returns(bool) {

@@ -1,29 +1,35 @@
-import FlightSuretyApp from '../../build/contracts/FlightSuretyApp.json';
-import Config from './config.json';
-import Web3 from 'web3';
-import express from 'express';
+import express from "express";
+import bodyParser from "body-parser";
+import cors from "cors";
 
-
-let config = Config['localhost'];
-let web3 = new Web3(new Web3.providers.WebsocketProvider(config.url.replace('http', 'ws')));
-web3.eth.defaultAccount = web3.eth.accounts[0];
-let flightSuretyApp = new web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
-
-
-flightSuretyApp.events.OracleRequest({
-    fromBlock: 0
-  }, function (error, event) {
-    if (error) console.log(error)
-    console.log(event)
-});
+import { Controller } from "./app/base_controller";
+import { oracleController } from "./app/oracle_controller";
 
 const app = express();
-app.get('/api', (req, res) => {
-    res.send({
-      message: 'An API for use with your Dapp!'
-    })
-})
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+const corsOptions = {
+  origin: "*",
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
+
+app.get("/", (req, res) => {
+  res.send({
+    message: "An API for use with your Dapp!"
+  });
+});
+
+app.get("/flights", async (req, res) => {
+  const flights = await Controller.getFlights().flights;
+  res.send(flights);
+});
+
+(() => {
+  Controller.init();
+  oracleController.init();
+})();
 
 export default app;
-
-

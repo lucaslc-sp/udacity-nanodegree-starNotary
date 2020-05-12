@@ -7,7 +7,7 @@ yarn-error.log*
 src/dapp/config.json
 src/server/config.json
 /dapp/
-prod/
+prod/*
 
 # Runtime data
 pids

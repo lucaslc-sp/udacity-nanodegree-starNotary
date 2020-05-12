@@ -14,6 +14,7 @@ interface IFlightSuretyData {
     function authorizeCaller(address callerAddress) external;
     function getFlightPrice(bytes32 _flightKey) external view returns(uint);
     function getRegisteredAirlinesCount() external view returns(uint);
+    function getRegisteredFlightsCount() external view returns(uint);
     function isFlightRegistered(bytes32 _flightKey) external view returns(bool);
     function getPassengerPaidAmount(bytes32 _flightKey, address _passenger) external view returns(uint);
 
