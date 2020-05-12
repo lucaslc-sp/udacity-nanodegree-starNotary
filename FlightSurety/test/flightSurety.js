@@ -12,6 +12,11 @@ contract('Flight Surety Tests', async (accounts) => {
   const insurancePrice = web3.utils.toWei("1", "ether");
   const passenger = accounts[8];
 
+  const airline2 = accounts[2];
+  const airline3 = accounts[3];
+  const airline4 = accounts[4];
+  const airline5 = accounts[5];
+
   var config;
   before('setup contract', async () => {
     config = await Test.Config(accounts);
@@ -98,8 +103,6 @@ contract('Flight Surety Tests', async (accounts) => {
   })
 
   it("(Airline) cannot register another one before providing funding", async () => {
-    const airline2 = accounts[2];
-
     try {
       await config.flightSuretyApp.registerAirline(airline2, { from: config.firstAirline });
     } catch (error) {}
@@ -128,9 +131,58 @@ contract('Flight Surety Tests', async (accounts) => {
     assert.equal(isAirlineFunded, true, "Airline hasn't provided funding");
   });
 
+  it("(Airline) Only first airline can register an airline when less than 4 airlines are registered", async () => {
+    let eventEmitted = false
+    
+    try {
+      await config.flightSuretyApp.registerAirline(airline2, { from: config.firstAirline });
+      await config.flightSuretyApp.registerAirline(airline3, { from: config.firstAirline });
+      await config.flightSuretyApp.registerAirline(airline4, { from: config.firstAirline });
+    } catch (error) {}
+
+    const isAirline2Registered = await config.flightSuretyData.isAirlineRegistered.call(airline2);
+    const isAirline3Registered = await config.flightSuretyData.isAirlineRegistered.call(airline3);
+    const isAirline4Registered = await config.flightSuretyData.isAirlineRegistered.call(airline4);
+
+    await config.flightSuretyData.FlightRegistered(function(error, event){
+      eventEmitted = true 
+    });
+
+    const count = await config.flightSuretyData.getRegisteredAirlinesCount();
+    
+    assert.equal(isAirline2Registered, true, "Second airline should able to be registered");
+    assert.equal(isAirline3Registered, true, "Third airline should able to be registered");
+    assert.equal(isAirline4Registered, true, "Fourth airline should able to be registered");
+    assert.equal(count, 4);
+    assert.equal(eventEmitted, true, 'Invalid event emitted');
+  });
+
+  it("(Airline) Registration of fifth airline cannot be registered without multiparty consensus", async () => {
+    await config.flightSuretyApp.registerAirline(airline5, {
+      from: config.firstAirline
+    });
+
+    let isAirline5Registered = await config.flightSuretyData.isAirlineRegistered(airline5);
+
+    assert.equal(isAirline5Registered, false, "Fifth airline should not registered without minimum votes");
+  });
+
+  it("(Airline) Registration of fifth airline cannot be duplicated", async () => {
+    let reverted = true;
+    try {
+      await config.flightSuretyApp.registerAirline(airline5, {
+        from: config.firstAirline
+      });
+    } catch (error) {
+      reverted = false;
+    }
+
+    assert.equal(reverted, false, "Airline should not be registered twice");
+  });
+
   it('(Airline) Can register a flight', async () => {
     let eventEmitted = false
-
+    
     try {
       await config.flightSuretyApp.registerFlight(
         flightCode,
@@ -139,9 +191,7 @@ contract('Flight Surety Tests', async (accounts) => {
         departure,
         destination,
         { from: config.firstAirline })
-      } catch (e) {
-        console.log(e)
-      }
+      } catch (e) {}
     
     await config.flightSuretyData.FlightRegistered(function(error, event){
       eventEmitted = true 
