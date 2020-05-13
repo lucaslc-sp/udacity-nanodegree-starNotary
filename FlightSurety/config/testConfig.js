@@ -27,6 +27,8 @@ var Config = async function(accounts) {
     const flightSuretyData = await FlightSuretyData.new(firstAirline);
     const flightSuretyApp = await FlightSuretyApp.new(flightSuretyData.address);
 
+    flightSuretyData.registerAirline
+
     
     return {
         owner: owner,

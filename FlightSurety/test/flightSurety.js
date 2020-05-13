@@ -14,7 +14,7 @@ contract('Flight Surety Tests', async (accounts) => {
 
   const airline2 = accounts[2];
   const airline3 = accounts[3];
-  const airline4 = accounts[4];
+  const airline4 = accounts[0];
   const airline5 = accounts[5];
 
   var config;
@@ -181,6 +181,12 @@ contract('Flight Surety Tests', async (accounts) => {
   });
 
   it('(Airline) Can register a flight', async () => {
+    // :: Putting funds for current account
+    await config.flightSuretyApp.fund({
+      from: config.owner,
+      value: web3.utils.toWei("20", "ether")
+    });
+
     let eventEmitted = false
     
     try {
@@ -189,9 +195,10 @@ contract('Flight Surety Tests', async (accounts) => {
         timestamp,
         price,
         departure,
-        destination,
-        { from: config.firstAirline })
-      } catch (e) {}
+        destination)
+      } catch (e) {
+        console.log(e)
+      }
     
     await config.flightSuretyData.FlightRegistered(function(error, event){
       eventEmitted = true 

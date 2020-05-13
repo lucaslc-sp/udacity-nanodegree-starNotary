@@ -1,5 +1,3 @@
-
-import http from 'http'
 import app from './server'
 const port = 3000;
 

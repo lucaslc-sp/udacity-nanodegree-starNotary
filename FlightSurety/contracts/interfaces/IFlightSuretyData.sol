@@ -24,13 +24,6 @@ interface IFlightSuretyData {
     function pay(address _originAddress) external;
     function fund(address _airline) external payable;
     function processFlightStatus(bytes32 _flightKey, uint8 _status) external;
-    function registerFlight(
-    string _flightCode,
-    uint _timestamp,
-    uint _price,
-    string _departure,
-    string _destination,
-    address _airline
-  ) external;
+    function registerFlight(string _flightCode, uint _timestamp, uint _price, string _departure, string _destination, address _airline) external;
 
 }
