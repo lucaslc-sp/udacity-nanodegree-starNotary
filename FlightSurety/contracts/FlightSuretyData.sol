@@ -251,34 +251,26 @@ contract FlightSuretyData is IFlightSuretyData {
     /**
     * @dev Generate a flightkey and add a flight in the flight list
     */
-    function registerFlight(
-    string _flightCode,
-    uint _timestamp,
-    uint _price,
-    string _departure,
-    string _destination,
-    address _airline
-  ) external
+    function registerFlight(string _flightCode, uint _timestamp, uint _price, string _departure, string _destination, address _airline) external
     requireIsOperational
-    requireIsCallerAuthorized {
+    requireIsCallerAuthorized
+    {
+        bytes32 flightKey = keccak256(abi.encodePacked(_flightCode, _destination, _timestamp));
 
-      bytes32 flightKey = keccak256(abi.encodePacked(_flightCode, _destination, _timestamp));
+        flights[flightKey] = Flight({
+            isRegistered: true,
+            timestamp: _timestamp,
+            status: 0,
+            airline: _airline,
+            code: _flightCode,
+            price: _price,
+            departure: _departure,
+            destination: _destination
+        });
 
-      flights[flightKey] = Flight({
-        isRegistered: true,
-        timestamp: _timestamp,
-        status: 0,
-        airline: _airline,
-        code: _flightCode,
-        price: _price,
-        departure: _departure,
-        destination: _destination
-      });
-
-      flightKeys.push(flightKey);
-
-      emit FlightRegistered(flightKey);
-  }
+        flightKeys.push(flightKey);
+        emit FlightRegistered(flightKey);
+    }
 
    /**
     * @dev Passanger can Buy insurance (book) for a flight

@@ -4,10 +4,10 @@ const data = config.flightSuretyData;
 export const Controller = {
   init: async () => {
     data.events.AirlineRegistered({}, (error, event) => {
-      if (error) console.log(error);
+      if (error) console.log('Err:: ', error);
       else {
-        const { origin, airline } = event.returnValues;
-        console.log(`AirlineRegistered: origin ${origin} airline ${airline}`);
+        const { origin, newAirline } = event.returnValues;
+        console.log(`AirlineRegistered: origin ${origin} airline ${newAirline}`);
       }
     });
 

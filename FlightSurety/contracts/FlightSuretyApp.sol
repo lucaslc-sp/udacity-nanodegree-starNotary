@@ -41,7 +41,6 @@ contract FlightSuretyApp {
     IFlightSuretyData public flightSuretyData;
 
     // :: Events for Smart Contracts functions
-    event FlightRegistered(bytes32 flightKey);
     event WithdrawRequest(address recipient);
 
     /********************************************************************************************/
@@ -191,25 +190,15 @@ contract FlightSuretyApp {
     * @dev Method for register a flight
     */
     function registerFlight(
-    string _flightCode,
-    uint _timestamp,
-    uint _price,
-    string _departure,
-    string _destination
+        string _flightCode,
+        uint _timestamp,
+        uint _price,
+        string _departure,
+        string _destination
     ) external
     requireIsOperational
     requireIsAirlineFunded {
-
-      flightSuretyData.registerFlight(
-        _flightCode,        
-        _timestamp,
-        _price,
-        _departure,
-        _destination,
-        msg.sender
-      );
-      bytes32 flightKey = keccak256(abi.encodePacked(_flightCode, _destination, _timestamp));
-      emit FlightRegistered(flightKey);
+        flightSuretyData.registerFlight(_flightCode, _timestamp, _price, _departure, _destination, msg.sender);
     }
 
     /**

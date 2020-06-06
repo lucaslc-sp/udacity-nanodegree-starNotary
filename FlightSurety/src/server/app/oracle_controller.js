@@ -53,11 +53,9 @@ export const oracleController = {
   registerOracle: async () => {
     const fees = await app.methods.REGISTRATION_FEE().call();
     accounts = await config.accounts;
-
+    
     try {
-      // for (let i = 1; i < oraclesCount; i += 1) {
-      for (let i = accountsCount - oraclesCount; i < oraclesCount; i += 1) {
-        console.log(i)
+      for (let i = 1; i < oraclesCount; i += 1) {
         await app.methods.registerOracle().send({
           from: accounts[i],
           value: fees,
