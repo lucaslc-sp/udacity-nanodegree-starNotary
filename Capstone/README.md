@@ -25,6 +25,10 @@ Square Verifier Contract Address: `0x0b6edfccffe33a9ada986948a21bed71e8b00610`
 - Seller (lucaslc_test): https://rinkeby.opensea.io/accounts/0xefb7eb9bad9aa82696a85361182f3f5ae1e55462
 - Buyer (lucaslc): https://rinkeby.opensea.io/accounts/0x336f878fd7382167fbacd5240d05651a3d014453
 
+### Contract Abi's
+
+- https://github.com/lucaslc-sp/Udacity-blockchain-nanodegree/blob/master/Capstone/zokrates/code/square/abi.json
+
 ## How to Execute Application
 
 ### Tests
