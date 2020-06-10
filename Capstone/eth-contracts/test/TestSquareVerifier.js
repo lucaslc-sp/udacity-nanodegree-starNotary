@@ -3,28 +3,32 @@ var Verifier = artifacts.require('Verifier');
 
 contract('Verifier', accounts => {
 
-    const account_one = accounts[0];
-    let proof = require('../../zokrates/code/square/proof');
+    const addr = accounts[0];
+    const proof = require("../../scripts/proof_2_4.json");
+    const wrong_proof = require("../../scripts/wrong_proof.json");
+
+    // correct proof
+    const proofs = Object.values(proof.proof);
+    const inputs = proof.inputs;
+
+    // incorrect proof
+    const wrong_proofs = Object.values(wrong_proof.proof);
+    const wrong_inputs = wrong_proof.inputs;
 
     describe('test square verifier - zokrates', function () {
         beforeEach(async function () {
-            this.contract = await Verifier.new({ from: account_one, gas: 4700000 });
+            this.contract = await Verifier.new({ from: addr, gas: 4700000 });
         })
 
         // Test verification with correct proof
-        // - use the contents from proof.json generated from zokrates steps
         it('Test verification with correct proof', async function () {
-            const { proof: { a, b, c }, inputs: inputs } = proof;
-            let isCorrect = await this.contract.verifyTx.call(a, b, c, inputs, { from: account_one });
-
+            let isCorrect = await this.contract.verifyTx.call(...proofs, inputs, { from: addr });
             assert.equal(true, isCorrect, "Invalid proof result");
         })
 
         // Test verification with incorrect proof
         it('Test verification with incorrect proof', async function () {
-            const { proof: { a, b, c } } = proof;
-            let isCorrect = await this.contract.verifyTx.call(a, b, c, [9,10], { from: account_one });
-
+            let isCorrect = await this.contract.verifyTx.call(...wrong_proofs, wrong_inputs, { from: addr });
             assert.equal(false, isCorrect, "Invalid proof result");
         })
 

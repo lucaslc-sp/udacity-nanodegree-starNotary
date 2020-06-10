@@ -1,82 +1,61 @@
-var DecentralandERC721Token = artifacts.require('DecentralandERC721Token');
+var ERC721MintableComplete = artifacts.require('CustomERC721Token');
 
-contract('DecentralandERC721Token', accounts => {
+contract('TestERC721Mintable', accounts => {
 
-    const account0 = accounts[0];
-    const account1 = accounts[1];
-    const account2 = accounts[2];
-    const account3 = accounts[3];
-    const account4 = accounts[4];
-    const account5 = accounts[5];
-    const account6 = accounts[6];
-    const account7 = accounts[7];
-    const account8 = accounts[8];
-    const account9 = accounts[9];
-
-
+    const account_one = accounts[0];
+    const account_two = accounts[1];
 
     describe('match erc721 spec', function () {
-        beforeEach(async function () { 
-            this.contract = await DecentralandERC721Token.new({from: account0});
-            await this.contract.mint(account0, 1,{from: account0});
-            await this.contract.mint(account1,2,{from: account0});
-            await this.contract.mint(account2,3,{from: account0});
-            await this.contract.mint(account3,4,{from: account0});
-            await this.contract.mint(account4,5,{from: account0});
-            await this.contract.mint(account5,6,{from: account0});
-            await this.contract.mint(account6,7,{from: account0});
-            await this.contract.mint(account7,8,{from: account0});
-            await this.contract.mint(account8,9,{from: account0});
-            await this.contract.mint(account9,10,{from: account0});
-            let owner = await this.contract.ownerOf.call(1,{from: account0});
-            assert.equal(owner,account0,"Owner not match..");
+        beforeEach(async function () {
+            this.contract = await ERC721MintableComplete.new({ from: account_one });
 
             // TODO: mint multiple tokens
+            await this.contract.mint(account_one, 1, { from: account_one })
+            await this.contract.mint(account_two, 2, { from: account_one })
         })
 
-        it('should return total supply', async function () { 
-            let supply = await this.contract.totalSupply.call({from:account0});
-            assert.equal(supply,10,"Supply should be 10 at this point.");
+        it('should return total supply', async function () {
+            const totalSupply = await this.contract.totalSupply({ from: account_one })
+            assert.equal(totalSupply, 2);
         })
 
-        it('should get token balance', async function () { 
-            let balance = await this.contract.balanceOf.call(account0,{from:account0});
-            assert.equal(balance.toNumber(),1,"Supply should be 10 at this point.");
+        it('should get token balance', async function () {
+            const token_balance = await this.contract.balanceOf.call(account_one,{from:account_one});
+            assert.equal(token_balance.toNumber(), 1);
         })
 
         // token uri should be complete i.e: https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/1
-        it('should return token uri', async function () { 
-            let tokenURI = await this.contract.tokenURI.call(1,{from:account0});
-            assert.equal(tokenURI,"https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/1","URI does not match.")
+        it('should return token uri', async function () {
+            const token_uri = await this.contract.tokenURI(1, { from: account_one });
+            assert.equal(token_uri, "https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/1");
         })
 
-        it('should transfer token from one owner to another', async function () { 
-            await this.contract.approve(account1,1,{from:account0});
-            await this.contract.transferFrom(account0,account1,1,{from:account0});
-            let owner = await this.contract.ownerOf.call(1,{from:account1});
-            assert.equal(owner,account1,"Ownership didnt transferred.");
+        it('should transfer token from one owner to another', async function () {
+            // Transfer from account_one to account_two
+            await this.contract.transferFrom(account_one, account_two, 1, {from: account_one });
+            const newOwner = await this.contract.ownerOf(1);
+            assert.equal(newOwner, account_two,"Ownership didnt transferred.");
         })
     });
 
     describe('have ownership properties', function () {
-        beforeEach(async function () { 
-            this.contract = await DecentralandERC721Token.new({from: account0});
+        beforeEach(async function () {
+            this.contract = await ERC721MintableComplete.new({ from: account_one });
         })
 
-        it('should fail when minting when address is not contract owner', async function () { 
-            let exception = false;
-            try{
-                await this.contract.mint(account1,11,{from: account1});
+        it('should fail when minting when address is not contract owner', async function () {
+            let exception_message = "";
+            try {
+                await this.contract.mint(account_two, 1, { from: account_two })
+            } catch (ex) {
+                exception_message = ex.reason;
             }
-            catch(e){
-                exception = true;
-            }
-            assert.equal(exception,true,"Minting without contract owner.");
+            assert.equal(exception_message, "Caller is not contract owner")
         })
 
-        it('should return contract owner', async function () { 
-            let contract_owner = await this.contract.getOwner.call({from:account0});
-            assert.equal(contract_owner,account0,"Contract owner does not match.")
+        it('should return contract owner', async function () {
+            const owner = await this.contract.getOwner();
+            assert.equal(owner.receipt.from, account_one.toLowerCase());
         })
 
     });

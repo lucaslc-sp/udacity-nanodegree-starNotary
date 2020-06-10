@@ -13,17 +13,17 @@ This is the capstone project for udacity blockchain nanodegree. The Objective of
 
 ### Contract Address on Rinkeby Network
 
-Square Verifier Contract Address: `0x0b6edfccffe33a9ada986948a21bed71e8b00610`
+Square Verifier Contract Address: `0xA2abCE5990A54ed88497D6525c5eF2e332614327`
 
 #### Transactions
-- Migrations: `0xd906fb8de81298952f421ba446aada85e9da58a04027847f91b096734db508be`
-- Verifier: `0x81e7e6186eba76759b7dd992a3e89b06006e03fb75d864d886e803fa961f75a6`
-- SolnSquareVerifier: `0xa5947291c635af5be9c8e19a58ecd94c24fdff94664fb4b4a512a33a92851ec0`
+- Migrations: `0xab1544d0e4384850cc87969b6be47c151af15167df6d39ac9880a87b98794633`
+- Verifier: `0x7c6a79451e48af04f5f522ec3b2a0370fafa85fd884fe6ac304b674e404ddcaa`
+- SolnSquareVerifier: `0xbad4649caee71948bb205bfc1dd24b4b090fe9c569e13ec375f50fd380b263ad`
 
 ### OpenSea Marketplace
 
 - Seller (lucaslc_test): https://rinkeby.opensea.io/accounts/0xefb7eb9bad9aa82696a85361182f3f5ae1e55462
-- Buyer (lucaslc): https://rinkeby.opensea.io/accounts/0x336f878fd7382167fbacd5240d05651a3d014453
+- Buyer (lucaslc_test02): https://rinkeby.opensea.io/accounts/0xcd7b5a1fdc0b11ebb0f29e7de0f901ae487586a9
 
 ## How to Execute Application
 
@@ -47,41 +47,45 @@ For deploy project, follow the steps:
 
 To generate a new valid proof for you contract, you need do some commands on Zokrates:
 
+First of all, install docker: You can find instructions [here](https://docs.docker.com/install/)
+
 | To Do | Command |
 | ------------- | ------------- |
-| Step 1: Install Docker | You can find instructions for installing it [here](https://docs.docker.com/install/)|
-| Step 2: Run ZoKrates | docker run -v <Your path to zokrates>:/home/zokrates/code -ti zokrates/zokrates /bin/bash| 
-| Step 3: A Quick Overview of the ZoKrates Process | 1.Compile Program</br> 2.Trusted Setup</br>3.Compute-Witness</br>4.Generate-Proof</br>5.Export-Verifier |
-| Step 4: Compile the program written in ZoKrates DSL | cd code/zokrates/code/square/ </br> ~/zokrates compile -i square.code |
-| Step 5: Generate the Trusted Setup | ~/zokrates setup |
-| Step 6: Compute Witness | ~/zokrates compute-witness -a 3 9 |
-| Step 7: Generate Proof | ~/zokrates generate-proof |
-| Step 8: Export Verifier | ~/zokrates export-verifier|
+| Step 1: Run ZoKrates | docker run -v <Your path to zokrates>:/home/zokrates/code -ti zokrates/zokrates /bin/bash| 
+| Step 2: A Quick Overview of the ZoKrates Process | 1.Compile Program</br> 2.Trusted Setup</br>3.Compute-Witness</br>4.Generate-Proof</br>5.Export-Verifier |
+| Step 3: Compile the program written in ZoKrates DSL | cd code/zokrates/code/square/ </br> ~/zokrates compile -i square.code |
+| Step 4: Generate the Trusted Setup | ~/zokrates setup |
+| Step 5: Compute Witness | ~/zokrates compute-witness -a 3 9 |
+| Step 6: Generate Proof | ~/zokrates generate-proof |
+| Step 7: Export Verifier | ~/zokrates export-verifier|
 
-Copy `proof.json` file and paste in `scripts` folder and update `scripts/mint.js` for use new proof.
+Copy `proof.json` file and paste in `scripts` folder and update `scripts/mint.js` for use new proof. You need to update `scripts/mint.js` and add the new `proof.json` in `zokratesProof` array.
 
 ### Mint Tokens
 
-All the proofs files in `scripts/mint` are valid proofs that attend `square.code` (square root). 
+All the proofs files in `/scripts` are valid proofs that attend `square.code` (square root). 
 
 Is necessary to export following environment variables before mint:
 
 ```
 export INFURA_KEY="<infura_key>"
 export MNEMONIC="<metmask_mnemonic>"
-export OWNER_ADDRESS="<my_address>"
+export OWNER_ADDRESS="<my_address_account>"
 export CONTRACT_ADDRESS="<deployed_contract_address>"
 export NETWORK="rinkeby"
 ```
 
-Finally, execute to mind tokens and see on the OpenSea items:
+Finally, execute to mint tokens and see on the OpenSea items:
 
 ```
 node scripts/mint.js
 ```
 
-https://rinkeby.opensea.io/
+Enter on opensea and go on account > my items
 
+```
+https://rinkeby.opensea.io/accounts/<my_address_account>
+```
 
 # Project Resources
 
