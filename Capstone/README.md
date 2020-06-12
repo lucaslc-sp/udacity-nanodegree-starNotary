@@ -21,7 +21,7 @@ Square Verifier Contract Address: `0xA2abCE5990A54ed88497D6525c5eF2e332614327`
 - SolnSquareVerifier: `0xbad4649caee71948bb205bfc1dd24b4b090fe9c569e13ec375f50fd380b263ad`
 
 ### OpenSea Marketplace
-
+- Lucas MarketPlace Testing Store - https://rinkeby.opensea.io/assets/lucas-marketplace-testing
 - Seller (lucaslc_test): https://rinkeby.opensea.io/accounts/0xefb7eb9bad9aa82696a85361182f3f5ae1e55462
 - Buyer (lucaslc_test02): https://rinkeby.opensea.io/accounts/0xcd7b5a1fdc0b11ebb0f29e7de0f901ae487586a9
 
